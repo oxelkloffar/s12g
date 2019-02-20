@@ -1,9 +1,12 @@
 
-export const numberOfPeople = (state = 0, action) => {
+export const numberOfPeople = (state = [], action) => {
   console.log(`Reducer triggered with action: ${action}, previous state: ${state}`)
+
   switch (action.type) {
     case 'ADD_PERSON':
-      return state + 1
+      console.log(action.name)
+      return [...state, action.name]
+
     default:
       return state
   }

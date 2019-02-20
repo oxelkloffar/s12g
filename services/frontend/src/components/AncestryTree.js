@@ -3,10 +3,12 @@ import { connect } from 'react-redux'
 
 
 
-const PersonCountComponent = ({ peeps }) =>
-  <p>
-    Peeps: {peeps}
-  </p>
+const AncestryTreeComponent = ({ peeps }) =>
+  <>
+    Peeps: {peeps.map((peep, id) => (
+      <p key={id}>{id} {peep}</p>
+    ))}
+  </>
 
 
 
@@ -21,5 +23,5 @@ const reduxStuff = connect(
   })
 )
 
-const PersonCount = reduxStuff(PersonCountComponent)
-export default PersonCount
+const AncestryTree = reduxStuff(AncestryTreeComponent)
+export default AncestryTree
