@@ -14,7 +14,7 @@ export default React.memo(
   function AncestryTree() {
     const [rootId, setRootId] = useState(myID);
     const onResetClick = useCallback(() => setRootId(myID), []);
-    const nodes = useSelector(state => state)
+    const nodes = useSelector(state => state.persons)
 
     return (
       <div className={styles.root}>
@@ -25,7 +25,7 @@ export default React.memo(
           <a href="https://github.com/SanichKotikov/react-family-tree-example">GitHub</a>
         </header>
         <PinchZoomPan
-          debug
+          /*debug*/
           captureWheel
           min={0.5}
           max={2.5}

@@ -3,18 +3,24 @@ import { Provider } from 'react-redux'
 import AddPerson from '../components/AddPerson'
 import AncestryTree from '../components/AncestryTree/AncestryTree'
 import './App.css'
-import { createStore } from 'redux'
-import { numberOfPeople } from '../reducers/numberOfPeople'
+import { createStore, combineReducers } from 'redux'
+import persons from '../reducers/persons'
+import selectedPerson from '../reducers/selectedPerson'
+import InspectPerson from '../components/InspectPerson/InspectPerson'
 
 
-const store = createStore(numberOfPeople)
+const rootReducer = combineReducers({
+  persons,
+  selectedPerson
+})
+const store = createStore(rootReducer)
 
 
 
 const App = () =>
   <Provider store={store}>
+    <InspectPerson />
     <AncestryTree />
-    <AddPerson />
   </Provider>
 
 export default App

@@ -1,7 +1,7 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from 'react'
+import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
-import styles from './FamilyNode.module.css';
+import styles from './FamilyNode.module.css'
 
 export default React.memo(
   function FamilyNode({ node, isRoot, onSubClick, style }) {
@@ -14,7 +14,7 @@ export default React.memo(
             styles[node.gender],
             isRoot && styles.isRoot,
           )}
-          onClick={() => dispatch({type:"SET_NODE_NAME", payload:{id:node.id, name:"Test Name"}})}
+          onClick={() => dispatch( {type:'SELECT_PERSON', payload:{id: node.id}} )}
         >
           <span>{node.name}</span>
         </div>
