@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 import AddPerson from '../components/AddPerson'
-import AncestryTree from '../components/AncestryTree'
+import AncestryTree from '../components/AncestryTree/AncestryTree'
 import './App.css'
 import { createStore } from 'redux'
 import { numberOfPeople } from '../reducers/numberOfPeople'
