@@ -4,18 +4,16 @@
 extern crate rocket;
 
 use rocket::Rocket;
+use api::routes;
+mod api;
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
 
 pub fn rocket() {
     build_rocket().launch();
 }
 
 fn build_rocket() -> Rocket {
-    rocket::ignite().mount("/", routes![index])
+    rocket::ignite().mount("/", api::routes())
 }
 
 #[cfg(test)]
