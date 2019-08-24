@@ -1,19 +1,16 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use]
 extern crate rocket;
 
 use rocket::Rocket;
-use api::routes;
-mod api;
-
+mod routes;
 
 pub fn rocket() {
     build_rocket().launch();
 }
 
 fn build_rocket() -> Rocket {
-    rocket::ignite().mount("/", api::routes())
+    rocket::ignite().mount("/", routes::routes())
 }
 
 #[cfg(test)]
