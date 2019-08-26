@@ -1,6 +1,6 @@
 use rocket::Route;
 use rocket_contrib::json::Json;
-use rocket_contrib::uuid::Uuid;
+use uuid::Uuid;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -14,7 +14,7 @@ struct CreateNodeRequest {
 
 #[derive(Serialize, Deserialize)]
 struct Node {
-    id: String,
+    id: Uuid,
     name: String,
 }
 
@@ -25,10 +25,11 @@ curl -X PUT \
 localhost:8000/api/v1/nodes/00000000-0000-0000-0000-000000000000
 */
 #[put("/api/v1/nodes/<id>", data = "<create_node_request>", format = "json")]
-fn add_node(id: Uuid, create_node_request: Json<CreateNodeRequest>) -> Json<Node> {
+fn add_node(id: rocket_contrib::uuid::Uuid, create_node_request: Json<CreateNodeRequest>) -> Json<Node> {
     println!("Add node: {} - {}", id, create_node_request.name);
+    let id: Uuid = *id; // the * is something with deref coercion
     Json(Node {
-        id: id.to_string(),
+        id,
         name: create_node_request.name.clone(),
     })
 }
