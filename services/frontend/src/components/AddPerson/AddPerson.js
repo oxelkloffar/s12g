@@ -18,7 +18,12 @@ function AddPerson(){
 	}
 
 	const nameOfRelative = relatedPerson[0].name
-	const relativeOptions = ['parent', 'child', 'sibling', 'partner']
+	const relativeOptions = [
+		{ value: 'parent', label: 'Parent' },
+		{ value: 'child', label: 'Child' },
+		{ value: 'sibling', label: 'Sibling' },
+		{ value: 'partner', label: 'Partner' }
+	]
 	const defaultOption = relativeOptions[0]
 
 	const finishAddingPerson = () => {
@@ -44,8 +49,8 @@ function AddPerson(){
 				<Dropdown
 					options={relativeOptions}
 					value={defaultOption}
-					placeholder="Select an option"
 					onChange={e => setRelation(e.value)}
+					placeholder="Select an option"
 				/>
 
 				<br /><br />
