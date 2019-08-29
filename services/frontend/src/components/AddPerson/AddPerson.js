@@ -4,6 +4,14 @@ import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import styles from './AddPerson.module.css'
 
+const relativeOptions = [
+	{ value: 'parent', label: 'Parent' },
+	{ value: 'child', label: 'Child' },
+	{ value: 'sibling', label: 'Sibling' },
+	{ value: 'partner', label: 'Partner' }
+]
+const defaultOption = relativeOptions[0]
+
 function AddPerson(){
 	const dispatch = useDispatch()
 	const addPersonState = useSelector(state => state.addPerson)
@@ -11,20 +19,13 @@ function AddPerson(){
 		.filter(person => person.id === (addPersonState ? addPersonState.relative : null))
 	)
 	const [name, setName] = useState(addPersonState ? addPersonState.name : null)
-	const [relation, setRelation] = useState()
+	const [relation, setRelation] = useState(defaultOption.value)
 
 	if (addPersonState === null) {
 		return <></>
 	}
 
 	const nameOfRelative = relatedPerson[0].name
-	const relativeOptions = [
-		{ value: 'parent', label: 'Parent' },
-		{ value: 'child', label: 'Child' },
-		{ value: 'sibling', label: 'Sibling' },
-		{ value: 'partner', label: 'Partner' }
-	]
-	const defaultOption = relativeOptions[0]
 
 	const finishAddingPerson = () => {
 		dispatch({ type: 'ABORT_ADDING_PERSON' })
@@ -50,7 +51,6 @@ function AddPerson(){
 					options={relativeOptions}
 					value={defaultOption}
 					onChange={e => setRelation(e.value)}
-					placeholder="Select an option"
 				/>
 
 				<br /><br />
