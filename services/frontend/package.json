@@ -7,6 +7,7 @@
     "pinch-zoom-pan": "^2.0.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-dropdown": "^1.6.4",
     "react-family-tree": "^1.3.0",
     "react-redux": "^7.1.0",
     "redux": "^4.0.1"

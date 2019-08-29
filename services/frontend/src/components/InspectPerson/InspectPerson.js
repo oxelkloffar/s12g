@@ -13,12 +13,23 @@ function InspectPerson(){
 
 	const person = selectedPerson[0]
 
+	const addRelative = () => {
+		dispatch({ type: 'DESELECTED_PERSON' })
+		dispatch({ type: 'START_ADDING_RELATIVE', payload:{relatedTo: person.id} })
+	}
+
 	return(
-		<div className={styles.bg} onClick={() => dispatch({ type: 'DESELECTED_PERSON' })}>
-			<div className={styles.modal} onClick={(e) => { e.stopPropagation(); dispatch({ type: 'SET_PERSON_NAME', payload:{id:person.id, name:person.name+'!'} }) }}>
-				{person.name}
+		<>
+			<div className={styles.bg} onClick={() => dispatch({ type: 'DESELECTED_PERSON' })}></div>
+			<div className={styles.modal}>
+				<p onClick={() => { dispatch({ type: 'SET_PERSON_NAME', payload:{id:person.id, name:person.name+'!'} }) }}>
+					{person.name}
+				</p>
+				<button onClick={addRelative}>
+					+
+				</button>
 			</div>
-		</div>
+		</>
 	)
 }
 

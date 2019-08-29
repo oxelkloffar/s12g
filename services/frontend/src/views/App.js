@@ -1,24 +1,40 @@
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
-import AddPerson from '../components/AddPerson'
-import AncestryTree from '../components/AncestryTree/AncestryTree'
 import './App.css'
-import { createStore, combineReducers } from 'redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import persons from '../reducers/persons'
 import selectedPerson from '../reducers/selectedPerson'
+import addPerson from '../reducers/addPerson'
+import AddPerson from '../components/AddPerson/AddPerson'
+import AncestryTree from '../components/AncestryTree/AncestryTree'
 import InspectPerson from '../components/InspectPerson/InspectPerson'
 
 
 const rootReducer = combineReducers({
   persons,
-  selectedPerson
+  selectedPerson,
+  addPerson
 })
-const store = createStore(rootReducer)
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const store = createStore(
+  rootReducer,
+  composeEnhancers(
+    applyMiddleware(store => next => action => {
+      console.group("Action:", action.type)
+      console.info('dispatching', action)
+      const result = next(action)
+      console.log('next state', store.getState())
+      console.groupEnd()
+      return result
+    })
+  )
+)
 
 
 
 const App = () =>
   <Provider store={store}>
+    <AddPerson />
     <InspectPerson />
     <AncestryTree />
   </Provider>
