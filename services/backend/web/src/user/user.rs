@@ -2,10 +2,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex, MutexGuard};
 
 lazy_static! {
-    static ref USERS: Arc<Mutex<HashMap<LoginCode, User>>> = {
-        let u = Arc::new(Mutex::new(HashMap::new()));
-        u
-    };
+    static ref USERS: Arc<Mutex<HashMap<LoginCode, User>>> = Arc::new(Mutex::new(HashMap::new()));
 }
 
 #[derive(Eq, PartialEq, Hash, Clone)]

@@ -3,6 +3,7 @@ use rocket_contrib::json::Json;
 use uuid::Uuid;
 
 use s12g_mail;
+
 use crate::user::user;
 use crate::user::user::{LoginCode, User};
 
@@ -69,7 +70,7 @@ curl localhost:8000/api/v1/users/login-link?code=abcdefgh123
 #[get("/api/v1/users/login-link?<code>")]
 fn login_url_clicked(code: String) -> Json<Option<User>> {
     println!("User clicked login link with code {}", code);
-    let user = user::login(LoginCode{login_code: code});
+    let user = user::login(LoginCode { login_code: code });
     Json(user)
 }
 
