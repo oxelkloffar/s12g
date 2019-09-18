@@ -65,7 +65,7 @@ fn login(
 }
 
 /*
-curl localhost:8000/api/v1/users/login-link?code=abcdefgh123
+curl localhost:8000/api/v1/users/login-link?code=fancy-code
 */
 #[get("/api/v1/users/login-link?<code>")]
 fn login_url_clicked(code: String) -> Json<Option<User>> {
