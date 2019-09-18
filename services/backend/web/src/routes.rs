@@ -1,6 +1,8 @@
 use rocket::Route;
+use rocket::http::{Cookie, Cookies, SameSite};
 use rocket_contrib::json::Json;
 use uuid::Uuid;
+use time::Duration;
 
 use s12g_mail;
 
@@ -68,12 +70,47 @@ fn login(
 curl localhost:8000/api/v1/users/login-link?code=fancy-code
 */
 #[get("/api/v1/users/login-link?<code>")]
-fn login_url_clicked(code: String) -> Json<Option<User>> {
+fn login_url_clicked(code: String, mut cookies: Cookies) -> Json<Option<User>> {
     println!("User clicked login link with code {}", code);
     let user = user::login(LoginCode { login_code: code });
+    if let Some(u) = &user {
+        let cookie = Cookie::build("name", "value")
+            .path("/")
+            .secure(true)
+            .http_only(true)
+            .same_site(SameSite::Strict)
+            .max_age(Duration::weeks(52))
+            .finish();
+        cookies.add(cookie);
+    }
     Json(user)
 }
 
+/*
+curl -X POST -v --cookie cookies --cookie-jar cookies http://localhost:8000/api/v1/cookie && curl -v --cookie cookies --cookie-jar cookies http://localhost:8000/api/v1/cookie
+*/
+
+#[post("/api/v1/cookie")]
+fn set_cookies(mut cookies: Cookies) {
+    let cookie = Cookie::build("name", "value")
+        .path("/")
+//        .secure(true)
+//        .http_only(true)
+//        .same_site(SameSite::Strict)
+        .max_age(Duration::weeks(52))
+        .finish();
+    cookies.add(cookie);
+}
+
+#[get("/api/v1/cookie")]
+fn get_cookies(cookies: Cookies) -> Json<String>{
+    println!("cookies: {:?}", cookies);
+    let cookie = cookies.get("name");
+    let name = cookie.unwrap().name().to_string();
+    let val = cookie.unwrap().value().to_string();
+    Json(format!("cookie:{}-{}", name, val))
+}
+
 pub fn routes() -> Vec<Route> {
-    routes![index, add_node, login, login_url_clicked]
+    routes![index, add_node, login, login_url_clicked, set_cookies, get_cookies]
 }
