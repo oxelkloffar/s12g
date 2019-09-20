@@ -8,11 +8,13 @@ extern crate rocket_contrib;
 #[macro_use]
 extern crate serde_derive;
 extern crate time;
+extern crate chrono;
 
 use rocket::Rocket;
 
 mod routes;
 mod user;
+mod session;
 
 pub fn rocket() {
     build_rocket().launch();
