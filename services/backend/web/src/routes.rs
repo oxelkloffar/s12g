@@ -8,6 +8,8 @@ use s12g_mail;
 
 use crate::user::user;
 use crate::user::user::{LoginCode, User};
+use rocket::response::status::NotFound;
+use rocket::http::Status;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -70,57 +72,50 @@ fn login(
 curl localhost:8000/api/v1/users/login-link?code=fancy-code
 */
 #[get("/api/v1/users/login-link?<code>")]
-fn login_url_clicked(code: String, mut cookies: Cookies) -> Json<Option<User>> {
+fn login_url_clicked(code: String, mut cookies: Cookies) -> Result<Json<User>, Status> {
     println!("User clicked login link with code {}", code);
     let user = user::login(LoginCode { login_code: code });
-    if let Some(u) = &user {
-        let cookie = Cookie::build("name", "value")
-            .path("/")
-            .secure(true)
-            .http_only(true)
-            .same_site(SameSite::Strict)
-            .max_age(Duration::weeks(52))
-            .finish();
-        cookies.add(cookie);
+    if user.is_none() {
+        return Result::Err(Status::Unauthorized)
     }
-    Json(user)
+    if let Some(u) = &user {
+        let cookie_builder = Cookie::build("user", u.email.clone())
+            .path("/")
+            .max_age(Duration::weeks(52));
+
+        // if release/prod
+        let cookie_builder = match cfg!(debug_assertions) {
+            true => cookie_builder,
+            false => cookie_builder
+                .secure(true)
+                .http_only(true)
+                .same_site(SameSite::Strict),
+        };
+
+        let cookie = cookie_builder
+            .finish();
+
+        cookies.add_private(cookie);
+    }
+    Result::Ok(Json(user.unwrap()))
 }
 
 /*
-curl -X POST -v --cookie cookies --cookie-jar cookies http://localhost:8000/api/v1/cookie && curl -v --cookie cookies --cookie-jar cookies http://localhost:8000/api/v1/cookie
+curl localhost:8000/api/v1/users/me
 */
-
-#[post("/api/v1/cookie")]
-fn set_cookies(mut cookies: Cookies) {
-    let cookie_builder = Cookie::build("name", "this is a secret message, not to be visible in headers")
-        .path("/")
-        .max_age(Duration::weeks(52));
-
-    // if release/prod
-    let cookie_builder = match cfg!(debug_assertions) {
-        true => cookie_builder,
-        false => cookie_builder
-            .secure(true)
-            .http_only(true)
-            .same_site(SameSite::Strict),
-    };
-
-    let cookie = cookie_builder
-        .finish();
-
-    cookies.add_private(cookie);
-}
-
-#[get("/api/v1/cookie")]
-fn get_cookies(mut cookies: Cookies) -> Json<String> {
+#[get("/api/v1/users/me", format = "json")]
+fn get_self(mut cookies: Cookies) -> Result<Json<User>, Status> {
     println!("cookies: {:?}", cookies);
-    let cookie = cookies.get_private("name");
+    let cookie = cookies.get_private("user");
+    if cookie.is_none() {
+        return Result::Err(Status::Unauthorized)
+    }
     let cookie = cookie.as_ref();
     let name = cookie.unwrap().name().to_owned();
     let val = cookie.unwrap().value().to_owned();
-    Json(format!("cookie:{}-{}", name, val))
+    Result::Ok(Json(User{ email: val }))
 }
 
 pub fn routes() -> Vec<Route> {
-    routes![index, add_node, login, login_url_clicked, set_cookies, get_cookies]
+    routes![index, add_node, login, login_url_clicked, get_self]
 }

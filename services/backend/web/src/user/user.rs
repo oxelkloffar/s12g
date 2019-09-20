@@ -10,7 +10,7 @@ pub struct LoginCode { pub login_code: String }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct User {
-    email: String,
+    pub email: String,
 }
 
 pub fn generate_login_code(email: &str) -> LoginCode {
