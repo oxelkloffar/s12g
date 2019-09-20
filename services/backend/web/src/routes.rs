@@ -1,8 +1,8 @@
-use rocket::Route;
 use rocket::http::{Cookie, Cookies, SameSite};
+use rocket::Route;
 use rocket_contrib::json::Json;
-use uuid::Uuid;
 use time::Duration;
+use uuid::Uuid;
 
 use s12g_mail;
 
@@ -92,18 +92,27 @@ curl -X POST -v --cookie cookies --cookie-jar cookies http://localhost:8000/api/
 
 #[post("/api/v1/cookie")]
 fn set_cookies(mut cookies: Cookies) {
-    let cookie = Cookie::build("name", "this is a secret message, not to be visible in headers")
+    let cookie_builder = Cookie::build("name", "this is a secret message, not to be visible in headers")
         .path("/")
-//        .secure(true)
-//        .http_only(true)
-//        .same_site(SameSite::Strict)
-        .max_age(Duration::weeks(52))
+        .max_age(Duration::weeks(52));
+
+    // if release/prod
+    let cookie_builder = match cfg!(debug_assertions) {
+        true => cookie_builder,
+        false => cookie_builder
+            .secure(true)
+            .http_only(true)
+            .same_site(SameSite::Strict),
+    };
+
+    let cookie = cookie_builder
         .finish();
+
     cookies.add_private(cookie);
 }
 
 #[get("/api/v1/cookie")]
-fn get_cookies(mut cookies: Cookies) -> Json<String>{
+fn get_cookies(mut cookies: Cookies) -> Json<String> {
     println!("cookies: {:?}", cookies);
     let cookie = cookies.get_private("name");
     let cookie = cookie.as_ref();
