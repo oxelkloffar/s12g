@@ -92,22 +92,23 @@ curl -X POST -v --cookie cookies --cookie-jar cookies http://localhost:8000/api/
 
 #[post("/api/v1/cookie")]
 fn set_cookies(mut cookies: Cookies) {
-    let cookie = Cookie::build("name", "value")
+    let cookie = Cookie::build("name", "this is a secret message, not to be visible in headers")
         .path("/")
 //        .secure(true)
 //        .http_only(true)
 //        .same_site(SameSite::Strict)
         .max_age(Duration::weeks(52))
         .finish();
-    cookies.add(cookie);
+    cookies.add_private(cookie);
 }
 
 #[get("/api/v1/cookie")]
-fn get_cookies(cookies: Cookies) -> Json<String>{
+fn get_cookies(mut cookies: Cookies) -> Json<String>{
     println!("cookies: {:?}", cookies);
-    let cookie = cookies.get("name");
-    let name = cookie.unwrap().name().to_string();
-    let val = cookie.unwrap().value().to_string();
+    let cookie = cookies.get_private("name");
+    let cookie = cookie.as_ref();
+    let name = cookie.unwrap().name().to_owned();
+    let val = cookie.unwrap().value().to_owned();
     Json(format!("cookie:{}-{}", name, val))
 }
 
