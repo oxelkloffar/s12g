@@ -123,6 +123,14 @@ fn get_self(mut cookies: Cookies) -> Result<Json<User>, Status> {
     }
 }
 
+/*
+curl localhost:8000/api/v1/users
+*/
+#[get("/api/v1/users", format = "json")]
+fn get_users() -> Json<Vec<User>> {
+    Json(user::get_users())
+}
+
 pub fn routes() -> Vec<Route> {
-    routes![index, add_node, login, login_url_clicked, get_self]
+    routes![index, add_node, login, login_url_clicked, get_self, get_users]
 }
