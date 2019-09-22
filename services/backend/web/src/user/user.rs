@@ -19,10 +19,9 @@ pub struct User {
 
 pub fn get_users() -> Vec<User> {
     let users_map: MutexGuard<HashMap<Uuid, User>> = USERS.lock().unwrap();
-    let values = users_map.values();
-    let owned = values.cloned();
-    let collect = owned.collect();
-    collect
+    users_map.values()
+        .cloned()
+        .collect()
 }
 
 pub fn generate_login_code(email: &str) -> LoginCode {
@@ -63,13 +62,13 @@ fn get_or_insert_user_by_email(email: &str) -> User {
     }
 }
 
-pub fn get_user(id: Uuid) -> Option<User> {
+pub fn get_user(id: &Uuid) -> Option<User> {
     let users_map: MutexGuard<HashMap<Uuid, User>> = USERS.lock().unwrap();
-    users_map.get(&id).cloned()
+    users_map.get(id).cloned()
 }
 
-pub fn login(code: LoginCode) -> Option<User> {
+pub fn login(code: &LoginCode) -> Option<User> {
     let map: MutexGuard<HashMap<LoginCode, User>> = LOGIN_CODES.lock().unwrap();
-    let user = map.get(&code);
+    let user = map.get(code);
     user.cloned()
 }

@@ -76,7 +76,7 @@ curl localhost:8000/api/v1/users/login-link?code=fancy-code
 #[get("/api/v1/users/login-link?<code>")]
 fn login_url_clicked(code: String, mut cookies: Cookies) -> Result<Json<Session>, Status> {
     println!("User clicked login link with code {}", code);
-    let maybe_user = user::login(LoginCode { login_code: code });
+    let maybe_user = user::login(&LoginCode { login_code: code });
     match maybe_user {
         Some(user) => {
             let session = Session {
@@ -118,7 +118,7 @@ fn get_self(mut cookies: Cookies) -> Result<Json<User>, Status> {
             let name = cookie.name().to_owned();
             let val = Session::parse(cookie.value());
             let user_id = val.user_id;
-            let user = user::get_user(user_id);
+            let user = user::get_user(&user_id);
             match user {
                 Some(user) => Result::Ok(Json(user)),
                 None => Result::Err(Status::InternalServerError),
