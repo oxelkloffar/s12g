@@ -40,13 +40,10 @@ pub fn generate_login_code(email: &str) -> LoginCode {
 
 fn get_or_insert_user_by_email(email: &str) -> User {
     let mut users_map: MutexGuard<HashMap<Uuid, User>> = USERS.lock().unwrap();
-    let users = users_map.values().filter(|user| {
-        if user.email == email {
-            return true;
-        }
-        return false;
-    });
-    let users = users.collect::<Vec<&User>>();
+    let users = users_map.values()
+        .filter(|user| user.email == email)
+        .cloned()
+        .collect::<Vec<User>>();
     match users.as_slice() {
         [] => {
             let user = User {
@@ -57,18 +54,18 @@ fn get_or_insert_user_by_email(email: &str) -> User {
             user
         },
         [user] => {
-            // todo figure out how to do this idiomatically
-            let asd = user.clone();
-            let asd = asd.clone();
-            asd
+            user.clone()
         },
         [user, ..] => {
             println!("Warning, more than 1 user with email {}", email);
-            let asd = user.to_owned();
-            let asd = asd.to_owned();
-            asd
+            user.clone()
         },
     }
+}
+
+pub fn get_user(id: Uuid) -> Option<User> {
+    let users_map: MutexGuard<HashMap<Uuid, User>> = USERS.lock().unwrap();
+    users_map.get(&id).cloned()
 }
 
 pub fn login(code: LoginCode) -> Option<User> {

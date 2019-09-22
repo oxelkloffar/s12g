@@ -117,7 +117,12 @@ fn get_self(mut cookies: Cookies) -> Result<Json<User>, Status> {
         Some(cookie) => {
             let name = cookie.name().to_owned();
             let val = Session::parse(cookie.value());
-            Result::Ok(Json(User { email: String::new(), user_id: val.user_id }))
+            let user_id = val.user_id;
+            let user = user::get_user(user_id);
+            match user {
+                Some(user) => Result::Ok(Json(user)),
+                None => Result::Err(Status::InternalServerError),
+            }
         }
         None => Result::Err(Status::Unauthorized),
     }
