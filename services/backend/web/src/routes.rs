@@ -1,7 +1,6 @@
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use rocket::http::{Cookie, Cookies, SameSite};
 use rocket::http::Status;
-use rocket::response::status::NotFound;
 use rocket::Route;
 use rocket_contrib::json::Json;
 use time::Duration;
@@ -115,7 +114,6 @@ fn get_self(mut cookies: Cookies) -> Result<Json<User>, Status> {
     let maybe_cookie = cookies.get_private("user");
     match maybe_cookie {
         Some(cookie) => {
-            let name = cookie.name().to_owned();
             let val = Session::parse(cookie.value());
             let user_id = val.user_id;
             let user = user::get_user(&user_id);

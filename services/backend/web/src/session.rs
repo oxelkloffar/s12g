@@ -34,6 +34,7 @@ mod tests {
         assert_eq!(r#"{"user_id":"b044210a-2186-4369-bf55-c4310c342fce","expires":"2019-09-20T15:23:47.435840Z"}"#, json);
     }
 
+    #[test]
     fn deserialize_from_json() {
         let json = r#"{"user_id":"b044210a-2186-4369-bf55-c4310c342fce","expires":"2019-09-20T15:23:47.435840Z"}"#;
 
